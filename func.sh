@@ -3,6 +3,7 @@ CONTI=false
 BP=NULL
 UNTIL=false
 SRC_LIST=list.src
+DISPLAY_WINDOW_SIZE=30
 
 function update_list_src
 {
@@ -32,12 +33,31 @@ function display_src
 			then 
 					# TTY is not set use current tty to print portion of source code
 					#TODO: improments 
-					sed -n "$(( line_to_mark - 5 )),$(( line_to_mark + 5 ))p" shelldb_temp_list_show 2> /dev/null
+					line_start_sed=$(( line_to_mark - $DISPLAY_WINDOW_SIZE )) 
+					# bound on line_start
+					if [ "$line_start_sed" -lt "0" ]
+					then 
+							line_start_sed=1
+					fi 
+					line_end_sed=$(( line_to_mark + $DISPLAY_WINDOW_SIZE )) 
+					# bound on line end TODO
+
+					sed -n "${line_start_sed},${line_end_sed}p" shelldb_temp_list_show  2> /dev/null
 			else
 					# TTY is set use it to display 
 					# display source to some ttys 
 					echo "clear" | bash > ${TTY}
-					cat < shelldb_temp_list_show > ${TTY}
+
+					line_start_sed=$(( line_to_mark - $DISPLAY_WINDOW_SIZE )) 
+					# bound on line_start
+					if [ "$line_start_sed" -lt "0" ]
+					then 
+							line_start_sed=1
+					fi 
+					line_end_sed=$(( line_to_mark + $DISPLAY_WINDOW_SIZE )) 
+					# bound on line end TODO
+
+					sed -n "${line_start_sed},${line_end_sed}p" shelldb_temp_list_show > ${TTY} 2> /dev/null
 			fi 
 
 	popd > /dev/null
