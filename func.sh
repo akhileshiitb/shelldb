@@ -6,36 +6,41 @@ SRC_LIST=list.src
 
 function update_list_src
 {
-	# function to show updated shource to user
-	line_to_mark=$1
+	pushd $SHELLDB_EXEC_DIR > /dev/null
 
-	#echo "update list.src"
+			# function to show updated shource to user
+			line_to_mark=$1
 
-	# get copy of list and align with source 
-	cat shelldb_temp_src > shelldb_temp_list
-	sed -i -e "1d" shelldb_temp_list
+			# get copy of list and align with source 
+			cat shelldb_temp_src > shelldb_temp_list
+			sed -i -e "1d" shelldb_temp_list
 
-	cat -n shelldb_temp_list > shelldb_temp_list_show
+			cat -n shelldb_temp_list > shelldb_temp_list_show
 
-	# point current execution 
-	sed -i -e "$line_to_mark s/^  /=>/" shelldb_temp_list_show
+			# point current execution 
+			sed -i -e "$line_to_mark s/^  /=>/" shelldb_temp_list_show
+
+	popd > /dev/null
 
 }
 
 function display_src
 {
-	# if TTY variable is set display to given tty 
-	if [ -z ${TTY} ]
-	then 
-			# TTY is not set use current tty to print portion of source code
-			#TODO: improments 
-			sed -n "$(( line_to_mark - 5 )),$(( line_to_mark + 5 ))p" shelldb_temp_list_show 2> /dev/null
-	else
-			# TTY is set use it to display 
-			# display source to some ttys 
-			echo "clear" | bash > ${TTY}
-			cat < shelldb_temp_list_show > ${TTY}
-	fi 
+	pushd $SHELLDB_EXEC_DIR > /dev/null
+			# if TTY variable is set display to given tty 
+			if [ -z ${TTY} ]
+			then 
+					# TTY is not set use current tty to print portion of source code
+					#TODO: improments 
+					sed -n "$(( line_to_mark - 5 )),$(( line_to_mark + 5 ))p" shelldb_temp_list_show 2> /dev/null
+			else
+					# TTY is set use it to display 
+					# display source to some ttys 
+					echo "clear" | bash > ${TTY}
+					cat < shelldb_temp_list_show > ${TTY}
+			fi 
+
+	popd > /dev/null
 }
 
 function step_trap
@@ -116,8 +121,10 @@ function step_trap
 									;;
 							quit)
 									echo "Exiting"
-									rm shelldb_temp_list
-									rm shelldb_temp_list_show
+									pushd $SHELLDB_EXEC_DIR > /dev/null
+											rm shelldb_temp_list
+											rm shelldb_temp_list_show
+									popd > /dev/null
 									exit 0
 									;;
 							*)

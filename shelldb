@@ -5,6 +5,7 @@ SRC_ORI=$1
 export TTY=$2
 # temp debug script
 SRC_DBG="shelldb_temp_src"
+export SHELLDB_EXEC_DIR=$PWD
 
 
 function cleanup_exit
@@ -15,7 +16,7 @@ function cleanup_exit
 	
 }
 
-
+cd $SHELLDB_EXEC_DIR
 # create temporary debug script
 echo "source func.sh" > ${SRC_DBG}
 cat ${SRC_ORI} >> ${SRC_DBG}
