@@ -24,11 +24,18 @@ function update_list_src
 
 function display_src
 {
-	# display source to some ttys 
-	echo "clear" | bash > ${TTY}
-	sed -n "$(( line_to_mark - 5 )),$(( line_to_mark + 5 ))p" shelldb_temp_list_show > ${TTY}
-	#cat < shelldb_temp_list_show > ${TTY}
-
+	# if TTY variable is set display to given tty 
+	if [ -z ${TTY} ]
+	then 
+			# TTY is not set use current tty to print portion of source code
+			#TODO: improments 
+			sed -n "$(( line_to_mark - 5 )),$(( line_to_mark + 5 ))p" shelldb_temp_list_show 2> /dev/null
+	else
+			# TTY is set use it to display 
+			# display source to some ttys 
+			echo "clear" | bash > ${TTY}
+			cat < shelldb_temp_list_show > ${TTY}
+	fi 
 }
 
 function step_trap
